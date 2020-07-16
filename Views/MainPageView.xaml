@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="AO_Auto_Login.MainPageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AO_Auto_Login"
+             mc:Ignorable="d"
+			 xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"	
+			 xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+			 Dialog:DialogParticipation.Register="{Binding}"
+			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             d:DesignHeight="430" d:DesignWidth="780">
+	<Grid>
+		<TextBlock Text="Account List" Margin="20,20,0,0" FontSize="18" />
+
+		<ListBox x:Name="AccountsListBox" HorizontalAlignment="Left" Height="329" 
+			Margin="10,50,0,0" VerticalAlignment="Top" Width="189"
+			ToolTip="Choose any accounts to launch and login" SelectionMode="Extended"
+			ItemsSource="{Binding ListedAccounts}" 
+			DisplayMemberPath="AccountName">
+		</ListBox>
+
+		<!-- Add Character button -->
+		<Button x:Name="AddAccount" Margin="145,12,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0"
+			BorderThickness="0" Background="Transparent" ToolTip="Click to add a new account to the list">
+			<iconPacks:PackIconModern Kind="Add" Width="25" Height="25" />
+		</Button>
+
+		<!-- Delete selected character button -->
+		<Button x:Name="DeleteAccount" Margin="175,12,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0"
+			Command="{Binding DeleteAccountCommand}"
+			CommandParameter="{Binding ElementName=AccountsListBox, Path=SelectedItems}"
+			BorderThickness="0" Background="Transparent" ToolTip="Click to delete the selected account(s)" >
+			<iconPacks:PackIconModern Kind="Delete" Width="25" Height="25" />
+		</Button>
+
+		<Button Content="Login Accounts" HorizontalAlignment="Left" Margin="231,43,0,0" VerticalAlignment="Top" 
+			Command="{Binding ActivateLaunchCommand}"
+			CommandParameter="{Binding ElementName=AccountsListBox, Path=SelectedItems}"
+			ToolTip="This will launch AO and login accounts based on saved settings"/>
+
+		<!-- Browse for AO Folder -->
+		<Button x:Name="BrowseAOFolder" Content="Choose AO Folder" HorizontalAlignment="Left" 
+				Margin="231,137,0,0" VerticalAlignment="Top" Width="145"/>
+		<TextBox x:Name="AOFolder" HorizontalAlignment="Left" Height="54" Margin="231,166,0,0" 
+			TextWrapping="Wrap" VerticalAlignment="Top" Width="498" IsReadOnly="True"
+			ToolTip="AO Folder for launching the game" />
+
+		<!-- Keypress Delay Timer -->
+		<TextBlock HorizontalAlignment="Left" Margin="230,236,0,0" Text="Keypress Delay Time - " VerticalAlignment="Top"/>
+		<TextBox x:Name="KeyPressDelayTime" HorizontalAlignment="Left" Height="23" Margin="430,238,0,0" 
+			VerticalAlignment="Top" Width="40"  
+			ToolTip="Time in ms between keys sent to AO (default 100). Increase if AO has trouble reacting too slowly to input." />
+
+		<!-- Launch Delay Timer -->
+		<TextBlock HorizontalAlignment="Left" Margin="230,276,0,0" Text="Launch Delay Time - " VerticalAlignment="Top"/>
+		<TextBox x:Name="LaunchDelayTime" HorizontalAlignment="Left" Height="23" Margin="430,278,0,0" 
+			VerticalAlignment="Top" Width="40"  
+			ToolTip="Time in ms to wait for AO to launch/open (default 2500). Increase if AO is opening too slowly for input." />
+
+		<!-- Hitting enter extra time to log in fully, or just sit @ character selection -->
+		<CheckBox Content="Hit [Enter] twice when logging in to login last logged in character automatically" 
+				  x:Name="MultipleEnters" Margin="230,80,51,299" />
+
+		<!-- Set Window Position -->
+		<CheckBox Content="Set AO Window Position?" 
+				  x:Name="SetAOWindowPosition" Margin="230,321,379,51"  />
+		<TextBox x:Name="AOWindowTop" HorizontalAlignment="Left" Height="23" Margin="430,322,0,0" 
+			VerticalAlignment="Top" Width="40"  
+			ToolTip="Top position of AO Window" />
+		<TextBlock HorizontalAlignment="Left" Margin="474,319,0,0" Text="x" VerticalAlignment="Top"/>
+		<TextBox x:Name="AOWindowLeft" HorizontalAlignment="Left" Height="23" Margin="488,322,0,0" 
+			VerticalAlignment="Top" Width="40"  
+			ToolTip="Left position of AO Window" />
+
+		<!-- Save Current Page button -->
+		<Button x:Name="SaveAccounts" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Save this settings for this page" 
+			BorderThickness="0" Background="Transparent" Margin="695,330,0,0" >
+			<iconPacks:PackIconModern Kind="Disk" Width="50" Height="50" 
+				VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		</Button>
+	</Grid>
+</UserControl>
