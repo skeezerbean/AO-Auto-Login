@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
+using System.Reflection;
 
 namespace AO_Auto_Login
 {
@@ -10,7 +11,7 @@ namespace AO_Auto_Login
 		public double WindowHeight { get { return GeneralSettingsManager.GeneralSettings.WindowHeight; } set { GeneralSettingsManager.GeneralSettings.WindowHeight = value; } }
 		public double WindowWidth { get { return GeneralSettingsManager.GeneralSettings.WindowWidth; } set { GeneralSettingsManager.GeneralSettings.WindowWidth = value; } }
 		public MainPageViewModel MainPageVM = new MainPageViewModel(DialogCoordinator.Instance);
-		public string AppTitle { get; set; } = "AO Auto Login Launcher";
+		public string AppTitle { get; set; } = $"AO Auto Login Launcher v{Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
 
 		public ShellViewModel()
 		{

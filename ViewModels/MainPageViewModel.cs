@@ -92,7 +92,6 @@ namespace AO_Auto_Login
 					myProcess.StartInfo.UseShellExecute = false;
 					myProcess.StartInfo.RedirectStandardInput = true;
 					myProcess.StartInfo.Arguments = "IA700453413 IP7505 DU";
-
 					myProcess.Start();
 
 					// Wait for process to start up
