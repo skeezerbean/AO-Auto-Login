@@ -109,7 +109,7 @@ namespace AO_Auto_Login
 					await Task.Delay(KeyPressDelayTime);
 
 					// delete existing account name entry
-					for (int i = 0; i < 50; i++)
+					for (int i = 0; i < 30; i++)
 					{
 						sim.Keyboard.KeyPress(VirtualKeyCode.DELETE);
 						await Task.Delay(1);
