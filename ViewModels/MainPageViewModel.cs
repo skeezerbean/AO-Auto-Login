@@ -32,15 +32,18 @@ namespace AO_Auto_Login
 		public ICommand ActivateLaunchCommand { get; set; }
 		public ICommand DeleteAccountCommand { get; set; }
 
-		public string AOFolder { get { return GeneralSettingsManager.GeneralSettings.AOFolder; } set { GeneralSettingsManager.GeneralSettings.AOFolder = value; } }
+		public BindableCollection<string> AOFolders { get { return GeneralSettingsManager.GeneralSettings.AOFolders; } set { GeneralSettingsManager.GeneralSettings.AOFolders = value; } }
+		public BindableCollection<string> AOArgs { get { return GeneralSettingsManager.GeneralSettings.AOArgs; } set { GeneralSettingsManager.GeneralSettings.AOArgs = value; } }
+		public static BindableCollection<AccountModel> AllAccounts { get; set; } = new BindableCollection<AccountModel>();
+		public static BindableCollection<AccountModel> SelectedAccounts { get; set; } = new BindableCollection<AccountModel>();
 		public int LaunchDelayTime { get { return GeneralSettingsManager.GeneralSettings.LaunchDelayTime; } set { GeneralSettingsManager.GeneralSettings.LaunchDelayTime = value; } }
 		public int KeyPressDelayTime { get { return GeneralSettingsManager.GeneralSettings.KeyPressDelayTime; } set { GeneralSettingsManager.GeneralSettings.KeyPressDelayTime = value; } }
 		public bool MultipleEnters { get { return GeneralSettingsManager.GeneralSettings.MultipleEnters; } set { GeneralSettingsManager.GeneralSettings.MultipleEnters = value; } }
 		public bool SetAOWindowPosition { get { return GeneralSettingsManager.GeneralSettings.SetAOWindowPosition; } set { GeneralSettingsManager.GeneralSettings.SetAOWindowPosition = value; } }
 		public double AOWindowTop { get { return GeneralSettingsManager.GeneralSettings.AOWindowTop; } set { GeneralSettingsManager.GeneralSettings.AOWindowTop = value; } }
 		public double AOWindowLeft { get { return GeneralSettingsManager.GeneralSettings.AOWindowLeft; } set { GeneralSettingsManager.GeneralSettings.AOWindowLeft = value; } }
-		public static BindableCollection<AccountModel> AllAccounts { get; set; } = new BindableCollection<AccountModel>();
-		public static BindableCollection<AccountModel> SelectedAccounts { get; set; } = new BindableCollection<AccountModel>();
+		public static string AOInstallationSelection { get { return GeneralSettingsManager.GeneralSettings.AOInstallationSelection; } set { GeneralSettingsManager.GeneralSettings.AOInstallationSelection = value; } }
+		public static string AOArgsSelection { get { return GeneralSettingsManager.GeneralSettings.AOArgsSelection; } set { GeneralSettingsManager.GeneralSettings.AOArgsSelection = value; } }
 		public BindableCollection<AccountModel> ListedAccounts { get { return AllAccounts; } set { ListedAccounts = value; } }
 		public static string AccountsXMLPath = "AccountData.xml";
 		private InputSimulator sim = new InputSimulator();
@@ -55,12 +58,12 @@ namespace AO_Auto_Login
 
 		public async Task ActivateLaunch(object parameter)
 		{
-			string path = AOFolder + "\\anarchy.exe";
+			string path = AOInstallationSelection + "\\anarchyonline.exe";
 
 			// Make sure the AO folder is legit before anything else
 			if (!File.Exists(path))
 			{
-				MessageBox.Show("AO Folder Path does not contain anarchy.exe");
+				MessageBox.Show("AO Folder Path does not contain anarchyonline.exe");
 				return;
 			}
 
@@ -87,11 +90,11 @@ namespace AO_Auto_Login
 				// Launch each process
 				using (Process myProcess = new Process())
 				{
-					myProcess.StartInfo.FileName = AOFolder + "\\anarchyonline.exe";
-					myProcess.StartInfo.WorkingDirectory = AOFolder;
+					myProcess.StartInfo.FileName = path;
+					myProcess.StartInfo.WorkingDirectory = AOInstallationSelection;
 					myProcess.StartInfo.UseShellExecute = false;
 					myProcess.StartInfo.RedirectStandardInput = true;
-					myProcess.StartInfo.Arguments = "IA700453413 IP7505 DU";
+					myProcess.StartInfo.Arguments = AOArgsSelection;
 					myProcess.Start();
 
 					// Wait for process to start up
@@ -211,8 +214,8 @@ namespace AO_Auto_Login
 			AllAccounts.Add(account);
 		}
 
-		// Get the AO scripts folder
-		public void BrowseAOFolder()
+		// Add an AO installation location
+		public void AddAOFolder()
 		{
 			const string baseFolder = @"C:\";
 			try
@@ -222,9 +225,72 @@ namespace AO_Auto_Login
 				dialog.UseDescriptionForTitle = true; // This applies to the Vista style dialog only, not the old dialog.
 				dialog.SelectedPath = baseFolder; // place to start search				
 				if ((bool)dialog.ShowDialog())
-					AOFolder = dialog.SelectedPath;
+				{
+					bool match = false;
+					foreach (var item in AOFolders)
+					{
+						// does it already exist?
+						if (AOFolders.Contains(dialog.SelectedPath))
+							match = true;
+					}
+
+					// Add if no existing entry
+					if (!match)
+						AOFolders.Add(dialog.SelectedPath);
+				}
 			}
 			catch { } // who cares
+		}
+
+		// Remove AO installation entry
+		public void DeleteAOFolder()
+		{
+			// If nothing selected then just return
+			try
+			{
+				if (AOInstallationSelection == null || AOInstallationSelection == "")
+					return;
+
+				AOFolders.Remove(AOInstallationSelection);
+			}
+			catch { }
+		}
+
+		public async void AddAOArgs()
+		{
+			string resultArgs;
+			bool duplicates = false;
+
+			resultArgs = await _dialogCoordinator.ShowInputAsync(this, "Args", "Enter Args string");
+
+			// If they hit cancel
+			if (resultArgs == null)
+				return;
+
+			// Check for duplicates
+			foreach (var item in AOArgs)
+				if (resultArgs == item) { duplicates = true; }
+
+			if (duplicates)
+			{
+				MessageBox.Show("Args already exists in list");
+				return;
+			}
+
+			AOArgs.Add(resultArgs);
+		}
+		public void DeleteAOArgs()
+		{
+			try
+			{
+				// If nothing selected, return
+				if (AOArgsSelection == null || AOArgsSelection == "")
+					return;
+
+				AOArgs.Remove(AOArgsSelection);
+			}
+
+			catch { }
 		}
 	}
 }

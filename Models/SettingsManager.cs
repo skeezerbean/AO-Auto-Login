@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using System;
 using System.IO;
 using System.Windows;
 using System.Xml.Serialization;
@@ -22,6 +23,13 @@ namespace AO_Auto_Login
 				GeneralSettings = new GeneralSettings();
 			GeneralSettings.WindowHeight = 450;
 			GeneralSettings.WindowWidth = 800;
+
+			// If the AO Args has nothing, add a default/active selection
+			if (GeneralSettings.AOArgs.Count == 0)
+			{
+				GeneralSettings.AOArgs.Add("IA700453413 IP7505 DU");
+				GeneralSettings.AOArgsSelection = "IA700453413 IP7505 DU";
+			}
 		}
 
 		public static void SaveGeneralSettings()
@@ -47,7 +55,10 @@ namespace AO_Auto_Login
 	/// </summary>
 	public class GeneralSettings
 	{
-		public string AOFolder { get; set; } = string.Empty;
+		public BindableCollection<string> AOFolders { get; set; }
+		public BindableCollection<string> AOArgs { get; set; }
+		public string AOInstallationSelection { get; set; } = string.Empty;
+		public string AOArgsSelection { get; set; }
 		public double WindowTop { get; set; } = 100;
 		public double WindowLeft { get; set; } = 100;
 		public double WindowHeight { get; set; }
@@ -101,7 +112,7 @@ namespace AO_Auto_Login
 
 				return loadResult;
 			}
-			else	// file doesn't exist, kick out default values?
+			else    // file doesn't exist, kick out default values?
 				return default;
 		}
 

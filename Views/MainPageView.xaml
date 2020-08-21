@@ -39,12 +39,33 @@
 			CommandParameter="{Binding ElementName=AccountsListBox, Path=SelectedItems}"
 			ToolTip="This will launch AO and login accounts based on saved settings"/>
 
-		<!-- Browse for AO Folder -->
-		<Button x:Name="BrowseAOFolder" Content="Choose AO Folder" HorizontalAlignment="Left" 
-				Margin="231,137,0,0" VerticalAlignment="Top" Width="145"/>
-		<TextBox x:Name="AOFolder" HorizontalAlignment="Left" Height="54" Margin="231,166,0,0" 
-			TextWrapping="Wrap" VerticalAlignment="Top" Width="498" IsReadOnly="True"
-			ToolTip="AO Folder for launching the game" />
+		<!-- Section for AO Installations list -->
+		<Button x:Name="AddAOFolder" Margin="230,137,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0"
+			BorderThickness="0" Background="Transparent" ToolTip="Click to add a new installation location to the list">
+			<iconPacks:PackIconModern Kind="Add" Width="25" Height="25" />
+		</Button>
+		<Button x:Name="DeleteAOFolder" Margin="265,137,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0"
+			BorderThickness="0" Background="Transparent" ToolTip="Click to delete the selected folder entry" >
+			<iconPacks:PackIconModern Kind="Delete" Width="25" Height="25" />
+		</Button>
+		<TextBlock Text="AO Installations List" Margin="300,137,0,0" FontSize="18" />
+		<ComboBox HorizontalAlignment="Left" Height="30" Margin="231,166,0,0" 
+			VerticalAlignment="Top" Width="300" IsReadOnly="True" SelectedItem="{Binding AOInstallationSelection}"
+			ToolTip="AO Folder for launching the game" ItemsSource="{Binding AOFolders}" />
+
+		<!-- Section for AO Args list -->
+		<Button x:Name="AddAOArgs" Margin="580,137,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0"
+			BorderThickness="0" Background="Transparent" ToolTip="Click to add a new installation location to the list">
+			<iconPacks:PackIconModern Kind="Add" Width="25" Height="25" />
+		</Button>
+		<Button x:Name="DeleteAOArgs" Margin="615,137,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0"
+			BorderThickness="0" Background="Transparent" ToolTip="Click to delete the selected folder entry" >
+			<iconPacks:PackIconModern Kind="Delete" Width="25" Height="25" />
+		</Button>
+		<TextBlock Text="AO Args List" Margin="650,137,0,0" FontSize="18" />
+		<ComboBox HorizontalAlignment="Left" Height="30" Margin="580,166,0,0" VerticalAlignment="Top" 
+			Width="190" IsReadOnly="True" SelectedItem="{Binding AOArgsSelection}" ItemsSource="{Binding AOArgs}"
+			ToolTip="AO command line args for launching the game - default is IA700453413 IP7505 DU" />
 
 		<!-- Keypress Delay Timer -->
 		<TextBlock HorizontalAlignment="Left" Margin="230,236,0,0" Text="Keypress Delay Time - " VerticalAlignment="Top"/>
