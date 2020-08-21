@@ -8,3 +8,5 @@ If you want it to also set each top-left position of the AO window to a specific
 Tooltips should answer most question on the controls.
 
 Note - if AO needs a patch then you'll need to launch AO through the normal launcher and let it patch before this app will work again. This is a limitation of AO itself.
+
+1.0.0.1 - Added combobox to be able to list multiple AO installations, such as having old + new client and being able to choose between which to launch. Same with command line arguments in case those change. Default args are launching "[..]\anarchyonline.exe IA700453413 IP7505 DU"
