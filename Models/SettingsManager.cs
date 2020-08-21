@@ -55,10 +55,10 @@ namespace AO_Auto_Login
 	/// </summary>
 	public class GeneralSettings
 	{
-		public BindableCollection<string> AOFolders { get; set; }
-		public BindableCollection<string> AOArgs { get; set; }
+		public BindableCollection<string> AOFolders { get; set; } = new BindableCollection<string>();
+		public BindableCollection<string> AOArgs { get; set; } = new BindableCollection<string>();
 		public string AOInstallationSelection { get; set; } = string.Empty;
-		public string AOArgsSelection { get; set; }
+		public string AOArgsSelection { get; set; } = string.Empty;
 		public double WindowTop { get; set; } = 100;
 		public double WindowLeft { get; set; } = 100;
 		public double WindowHeight { get; set; }
