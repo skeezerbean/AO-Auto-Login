@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="AO_Auto_Login.ManageServersView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+		Dialog:DialogParticipation.Register="{Binding}"
+		FontSize="14" mc:Ignorable="d" d:DesignHeight="370" d:DesignWidth="780">
+	
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<!-- DataGrid -->
+			<ColumnDefinition Width="auto" />
+			<!-- Selected entry details -->
+			<ColumnDefinition Width="auto" />
+			<!-- Selected entry accounts -->
+			<ColumnDefinition Width="auto" />
+		</Grid.ColumnDefinitions>
+		
+		<!-- Column 0 -->
+		<StackPanel>
+			<!-- Buttons to add/remove entries -->
+			<StackPanel Orientation="Horizontal">
+				<Button x:Name="AddServer" Content="Add Entry" Margin="5" />
+				<Button x:Name="RemoveSelectedServer" Content="Remove Selected" Margin="5" />
+			</StackPanel>
+			
+			<!-- Our data -->
+			<StackPanel>
+				<DataGrid MaxWidth="200" MaxHeight="200" HorizontalAlignment="Left" Margin="10"
+					ItemsSource="{Binding ServerList}" AutoGenerateColumns="False"
+					SelectionMode="Single" SelectedItem="{Binding SelectedServer}" IsReadOnly="True" >
+					<!-- This sets up columns with the names we want -->
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Server Description" Binding="{Binding Description}" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</StackPanel>
+		</StackPanel>
+
+		<!-- Column 1 - Selected Entry details -->
+		<StackPanel Grid.Column="1" Margin="10" Orientation="Horizontal">
+			<StackPanel VerticalAlignment="Center">
+				<TextBlock Text="Selected Entry Folder Location" Margin="5" />
+				<TextBox x:Name="SelectedServerFolderLocation" Margin="5" />
+				<TextBlock Text="Selected Entry Launch Arguments" Margin="5" />
+				<TextBox x:Name="SelectedServerLaunchArgs" Margin="5" />
+			</StackPanel>
+		</StackPanel>
+		
+		<!-- Column 2 - Selected Entry Account List -->
+		<StackPanel Grid.Column="2" Margin="10">
+			
+			<!-- Add/Remove buttons-->
+			<StackPanel Orientation="Horizontal">
+				<Button x:Name="AddAccount" Content="Add Account" Margin="10" />
+				<Button x:Name="RemoveAccount" Content="Remove Selected Account" Margin="10" />
+			</StackPanel>
+			
+			<!-- Account List -->
+			<StackPanel>
+				<ListBox Margin="10" ItemsSource="{Binding AccountList}"
+					DisplayMemberPath="AccountName" SelectedItem="{Binding SelectedAccount}" />
+			</StackPanel>
+		</StackPanel>
+
+	</Grid>
+</UserControl>

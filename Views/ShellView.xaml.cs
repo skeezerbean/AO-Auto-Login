@@ -18,5 +18,10 @@ namespace AO_Auto_Login
 			InitializeComponent();
 			ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 		}
+
+		private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			GeneralSettingsManager.SaveSettings();
+		}
 	}
 }

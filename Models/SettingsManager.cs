@@ -21,18 +21,9 @@ namespace AO_Auto_Login
 			// If somehow settings retrieval failed, pop in default settings
 			if (GeneralSettings == null)
 				GeneralSettings = new GeneralSettings();
-			GeneralSettings.WindowHeight = 450;
-			GeneralSettings.WindowWidth = 800;
-
-			// If the AO Args has nothing, add a default/active selection
-			if (GeneralSettings.AOArgs.Count == 0)
-			{
-				GeneralSettings.AOArgs.Add("IA700453413 IP7505 DU");
-				GeneralSettings.AOArgsSelection = "IA700453413 IP7505 DU";
-			}
 		}
 
-		public static void SaveGeneralSettings()
+		public static void SaveSettings()
 		{
 			XMLManager.SaveToXML<GeneralSettings>(SettingsXMLPath, GeneralSettings);
 		}
@@ -55,14 +46,12 @@ namespace AO_Auto_Login
 	/// </summary>
 	public class GeneralSettings
 	{
-		public BindableCollection<string> AOFolders { get; set; } = new BindableCollection<string>();
-		public BindableCollection<string> AOArgs { get; set; } = new BindableCollection<string>();
-		public string AOInstallationSelection { get; set; } = string.Empty;
-		public string AOArgsSelection { get; set; } = string.Empty;
+		public BindableCollection<ServerModel> ServerList { get; set; } = new BindableCollection<ServerModel>();
+		public ServerModel SelectedServer { get; set; }
 		public double WindowTop { get; set; } = 100;
 		public double WindowLeft { get; set; } = 100;
-		public double WindowHeight { get; set; }
-		public double WindowWidth { get; set; }
+		public double WindowHeight { get; set; } = 450;
+		public double WindowWidth { get; set; } = 800;
 		public int LaunchDelayTime { get; set; } = 2500;
 		public int KeyPressDelayTime { get; set; } = 100;
 		public bool MultipleEnters { get; set; } = false;
@@ -82,6 +71,14 @@ namespace AO_Auto_Login
 		public string AccountPassword { get; set; } = "";
 
 		public AccountModel() { }
+	}
+
+	public class ServerModel
+	{
+		public string Description { get; set; } = "";
+		public string ClientPath { get; set; } = "";
+		public string LaunchArguments { get; set; } = "IA700453413 IP7505 DU"; // default AO args
+		public BindableCollection<AccountModel> AccountList { get; set; } = new BindableCollection<AccountModel>();
 	}
 
 	/// <summary>

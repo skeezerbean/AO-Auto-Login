@@ -1,6 +1,5 @@
 ﻿using Caliburn.Micro;
 using MahApps.Metro.Controls.Dialogs;
-using Ookii.Dialogs.Wpf;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -32,9 +31,8 @@ namespace AO_Auto_Login
 		public ICommand ActivateLaunchCommand { get; set; }
 		public ICommand DeleteAccountCommand { get; set; }
 
-		public BindableCollection<string> AOFolders { get { return GeneralSettingsManager.GeneralSettings.AOFolders; } set { GeneralSettingsManager.GeneralSettings.AOFolders = value; } }
-		public BindableCollection<string> AOArgs { get { return GeneralSettingsManager.GeneralSettings.AOArgs; } set { GeneralSettingsManager.GeneralSettings.AOArgs = value; } }
-		public static BindableCollection<AccountModel> AllAccounts { get; set; } = new BindableCollection<AccountModel>();
+		public BindableCollection<AccountModel> ServerAccounts { get { return (SelectedServer == null) ? new BindableCollection<AccountModel>() : SelectedServer.AccountList; } }
+		public BindableCollection<ServerModel> ServerList { get { return GeneralSettingsManager.GeneralSettings.ServerList; } }
 		public static BindableCollection<AccountModel> SelectedAccounts { get; set; } = new BindableCollection<AccountModel>();
 		public int LaunchDelayTime { get { return GeneralSettingsManager.GeneralSettings.LaunchDelayTime; } set { GeneralSettingsManager.GeneralSettings.LaunchDelayTime = value; } }
 		public int KeyPressDelayTime { get { return GeneralSettingsManager.GeneralSettings.KeyPressDelayTime; } set { GeneralSettingsManager.GeneralSettings.KeyPressDelayTime = value; } }
@@ -42,23 +40,19 @@ namespace AO_Auto_Login
 		public bool SetAOWindowPosition { get { return GeneralSettingsManager.GeneralSettings.SetAOWindowPosition; } set { GeneralSettingsManager.GeneralSettings.SetAOWindowPosition = value; } }
 		public double AOWindowTop { get { return GeneralSettingsManager.GeneralSettings.AOWindowTop; } set { GeneralSettingsManager.GeneralSettings.AOWindowTop = value; } }
 		public double AOWindowLeft { get { return GeneralSettingsManager.GeneralSettings.AOWindowLeft; } set { GeneralSettingsManager.GeneralSettings.AOWindowLeft = value; } }
-		public static string AOInstallationSelection { get { return GeneralSettingsManager.GeneralSettings.AOInstallationSelection; } set { GeneralSettingsManager.GeneralSettings.AOInstallationSelection = value; } }
-		public static string AOArgsSelection { get { return GeneralSettingsManager.GeneralSettings.AOArgsSelection; } set { GeneralSettingsManager.GeneralSettings.AOArgsSelection = value; } }
-		public BindableCollection<AccountModel> ListedAccounts { get { return AllAccounts; } set { ListedAccounts = value; } }
-		public static string AccountsXMLPath = "AccountData.xml";
+		public ServerModel SelectedServer { get { return GeneralSettingsManager.GeneralSettings.SelectedServer; } set { GeneralSettingsManager.GeneralSettings.SelectedServer = value; } }
+		public BindableCollection<AccountModel> ListedAccounts { get { return ServerAccounts; } set { ListedAccounts = value; } }
 		private InputSimulator sim = new InputSimulator();
 
 		public MainPageViewModel(IDialogCoordinator instance)
 		{
-			LoadAccounts();
 			_dialogCoordinator = instance;
 			ActivateLaunchCommand = (ICommand)new RelayParameterizedCommand(async (parameter) => await ActivateLaunch(parameter));
-			DeleteAccountCommand = (ICommand)new RelayParameterizedCommand(async (parameter) => await DeleteAccount(parameter));
 		}
 
 		public async Task ActivateLaunch(object parameter)
 		{
-			string path = AOInstallationSelection + "\\anarchyonline.exe";
+			string path = SelectedServer.ClientPath + "\\anarchyonline.exe";
 
 			// Make sure the AO folder is legit before anything else
 			if (!File.Exists(path))
@@ -91,10 +85,10 @@ namespace AO_Auto_Login
 				using (Process myProcess = new Process())
 				{
 					myProcess.StartInfo.FileName = path;
-					myProcess.StartInfo.WorkingDirectory = AOInstallationSelection;
+					myProcess.StartInfo.WorkingDirectory = SelectedServer.ClientPath;
 					myProcess.StartInfo.UseShellExecute = false;
 					myProcess.StartInfo.RedirectStandardInput = true;
-					myProcess.StartInfo.Arguments = AOArgsSelection;
+					myProcess.StartInfo.Arguments = SelectedServer.LaunchArguments;
 					myProcess.Start();
 
 					// Wait for process to start up
@@ -138,159 +132,6 @@ namespace AO_Auto_Login
 					await Task.Delay(500);
 				}
 			}
-		}
-
-		public static void SaveAccounts()
-		{
-			XMLManager.SaveToXML<BindableCollection<AccountModel>>(AccountsXMLPath, AllAccounts);
-			GeneralSettingsManager.SaveGeneralSettings();
-		}
-
-		public static void LoadAccounts()
-		{
-			// Pull in our characters and sort the list
-			var temp = XMLManager.LoadFromXML<BindableCollection<AccountModel>>(AccountsXMLPath);
-			if (temp == null)
-				AllAccounts = new BindableCollection<AccountModel>();
-			else
-			{
-				var tempAllAccounts = temp.ToList();
-				tempAllAccounts.Sort((x, y) => string.Compare(x.AccountName, y.AccountName));
-				AllAccounts = new BindableCollection<AccountModel>(tempAllAccounts);
-			}
-		}
-
-		public async Task DeleteAccount(object parameter)
-		{
-			if (parameter == null)
-				return;
-
-			// parameter is SelectedItems coming from the multi-select ListBox. Comes as IList, 
-			// from CommandParameter in button Command, this casts it into CharacterModel
-			System.Collections.IList items = (System.Collections.IList)parameter;
-			var collection = items.Cast<AccountModel>();
-
-			// Buddy the Elf: I love deleting! Deleting's my favorite!
-			// Setting .ToList eliminated exception issue
-			foreach (var item in collection.ToList())
-			{
-				AllAccounts.Remove(item);
-				await Task.Delay(1);
-			}
-		}
-
-		public async void AddAccount()
-		{
-			string resultAccount;
-			string resultPassword;
-			bool duplicates = false;
-			AccountModel account = new AccountModel();
-
-			resultAccount = await _dialogCoordinator.ShowInputAsync(this, "Account", "Enter Account Name");
-
-			// If they hit cancel
-			if (resultAccount == null)
-				return;
-
-			// Check for duplicates
-			foreach (var item in AllAccounts)
-				if (resultAccount == item.AccountName) { duplicates = true; }
-
-			if (duplicates)
-			{
-				MessageBox.Show("Account already exists in list");
-				return;
-			}
-
-			resultPassword = await _dialogCoordinator.ShowInputAsync(this, "Account", "Enter Account Password");
-
-			// If they hit cancel
-			if (resultPassword == null)
-				return;
-
-			// take input retrieved, put into a new entry
-			account.AccountName = resultAccount;
-			account.AccountPassword = resultPassword;
-			AllAccounts.Add(account);
-		}
-
-		// Add an AO installation location
-		public void AddAOFolder()
-		{
-			const string baseFolder = @"C:\";
-			try
-			{
-				VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
-				dialog.Description = "Please select a folder.";
-				dialog.UseDescriptionForTitle = true; // This applies to the Vista style dialog only, not the old dialog.
-				dialog.SelectedPath = baseFolder; // place to start search				
-				if ((bool)dialog.ShowDialog())
-				{
-					bool match = false;
-					foreach (var item in AOFolders)
-					{
-						// does it already exist?
-						if (AOFolders.Contains(dialog.SelectedPath))
-							match = true;
-					}
-
-					// Add if no existing entry
-					if (!match)
-						AOFolders.Add(dialog.SelectedPath);
-				}
-			}
-			catch { } // who cares
-		}
-
-		// Remove AO installation entry
-		public void DeleteAOFolder()
-		{
-			// If nothing selected then just return
-			try
-			{
-				if (AOInstallationSelection == null || AOInstallationSelection == "")
-					return;
-
-				AOFolders.Remove(AOInstallationSelection);
-			}
-			catch { }
-		}
-
-		public async void AddAOArgs()
-		{
-			string resultArgs;
-			bool duplicates = false;
-
-			resultArgs = await _dialogCoordinator.ShowInputAsync(this, "Args", "Enter Args string");
-
-			// If they hit cancel
-			if (resultArgs == null)
-				return;
-
-			// Check for duplicates
-			foreach (var item in AOArgs)
-				if (resultArgs == item) { duplicates = true; }
-
-			if (duplicates)
-			{
-				MessageBox.Show("Args already exists in list");
-				return;
-			}
-
-			AOArgs.Add(resultArgs);
-		}
-		public void DeleteAOArgs()
-		{
-			try
-			{
-				// If nothing selected, return
-				if (AOArgsSelection == null || AOArgsSelection == "")
-					return;
-
-				AOArgs.Remove(AOArgsSelection);
-			}
-
-			catch { }
 		}
 	}
 }

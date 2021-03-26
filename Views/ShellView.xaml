@@ -4,21 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-		xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"		
-		xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:local="clr-namespace:AO_Auto_Login" Background="DimGray"
+		xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+		Background="#707078" Closing="MetroWindow_Closing"
 		BorderThickness="0" GlowBrush="Black" Icon="/Resources/icons8-person-shrugging-96.png"
 		Dialog:DialogParticipation.Register="{Binding}"
-		xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 		mc:Ignorable="d" FontSize="20" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
         Title="{Binding AppTitle}" Height="{Binding WindowHeight, Mode=TwoWay}" Width="{Binding WindowWidth, Mode=TwoWay}"
 			Top="{Binding WindowTop, Mode=TwoWay}" Left="{Binding WindowLeft, Mode=TwoWay}">
-	<Grid>
-		<!-- ActiveItem is Caliburn, marks this as the active child form -->
-		<Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Padding="5" Margin="5" Background="#111111ff">
-			<Grid>
-				<ContentControl x:Name="ActiveItem" Opacity="0.7"/>
-			</Grid>
-		</Border>		
-	</Grid>
+	
+			<StackPanel>
+				<StackPanel Orientation="Horizontal" >
+					<Button x:Name="MainPage" Content="Main Page" Margin="10" Width="120" />
+					<Button x:Name="ManageServers" Content="Manage Servers" Margin="10" Width="120" />
+				</StackPanel>
+
+				<!-- ActiveItem is Caliburn, marks this as the active child form -->
+				<ContentControl x:Name="ActiveItem" />
+			</StackPanel>
 </Controls:MetroWindow>
